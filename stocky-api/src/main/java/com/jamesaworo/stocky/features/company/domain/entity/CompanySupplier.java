@@ -11,7 +11,7 @@ import com.jamesaworo.stocky.core.base.BaseModel;
 import com.jamesaworo.stocky.features.product.domain.entity.ProductCategory;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 import static com.jamesaworo.stocky.core.constants.Table.COMPANY_SUPPLIER;

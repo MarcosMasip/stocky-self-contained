@@ -3,7 +3,7 @@ package com.jamesaworo.stocky.features.product.domain.entity;
 import com.jamesaworo.stocky.core.base.BaseModel;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 import static com.jamesaworo.stocky.core.constants.Table.PRODUCT_CATEGORY;

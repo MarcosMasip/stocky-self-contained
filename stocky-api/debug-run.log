@@ -1,0 +1,43 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.2)
+
+2025-09-18T21:23:50.208-04:00  INFO 30708 --- [           main] c.jamesaworo.stocky.StockyApplication    : Starting StockyApplication v0.0.1-SNAPSHOT using Java 21.0.8 with PID 30708 (/Users/marcosmasip/Documents/stocky-self-contained/stocky-api/target/stocky-api.jar started by marcosmasip in /Users/marcosmasip/Documents/stocky-self-contained/stocky-api)
+2025-09-18T21:23:50.210-04:00  INFO 30708 --- [           main] c.jamesaworo.stocky.StockyApplication    : The following 1 profile is active: "offline"
+2025-09-18T21:23:50.732-04:00  INFO 30708 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-18T21:23:50.829-04:00  INFO 30708 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 44 JPA repository interfaces.
+2025-09-18T21:23:51.202-04:00  INFO 30708 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-18T21:23:51.209-04:00  INFO 30708 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-18T21:23:51.210-04:00  INFO 30708 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.26]
+2025-09-18T21:23:51.227-04:00  INFO 30708 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-18T21:23:51.228-04:00  INFO 30708 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 982 ms
+2025-09-18T21:23:51.256-04:00  INFO 30708 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-09-18T21:23:51.430-04:00  INFO 30708 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./data/h2/stocky user=SA
+2025-09-18T21:23:51.431-04:00  INFO 30708 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-09-18T21:23:51.437-04:00  INFO 30708 --- [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/h2/stocky'
+2025-09-18T21:23:51.506-04:00  INFO 30708 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-18T21:23:51.547-04:00  INFO 30708 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2025-09-18T21:23:51.567-04:00  INFO 30708 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-18T21:23:51.636-04:00  WARN 30708 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-18T21:23:51.760-04:00  INFO 30708 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-18T21:23:52.790-04:00  INFO 30708 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-18T21:23:52.829-04:00  INFO 30708 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-18T21:23:52.997-04:00  INFO 30708 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-18T21:23:53.789-04:00  WARN 30708 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-18T21:23:53.802-04:00  INFO 30708 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-09-18T21:23:53.839-04:00  INFO 30708 --- [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-09-18T21:23:54.101-04:00  INFO 30708 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-18T21:23:54.112-04:00  INFO 30708 --- [           main] c.jamesaworo.stocky.StockyApplication    : Started StockyApplication in 4.105 seconds (process running for 4.421)
+[offline] Seed checks completed.
+2025-09-18T21:23:56.012-04:00  INFO 30708 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-18T21:23:56.012-04:00  INFO 30708 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-18T21:23:56.013-04:00  INFO 30708 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-09-18T21:24:44.574-04:00  INFO 30708 --- [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-18T21:24:44.577-04:00  INFO 30708 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-09-18T21:24:44.578-04:00  INFO 30708 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

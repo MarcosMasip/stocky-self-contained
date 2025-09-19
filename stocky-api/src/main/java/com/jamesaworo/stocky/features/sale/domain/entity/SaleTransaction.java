@@ -13,9 +13,8 @@ import com.jamesaworo.stocky.features.company.domain.entity.CompanyPaymentOption
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.*;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -25,7 +24,6 @@ import static com.jamesaworo.stocky.core.constants.Table.SALES_TRANSACTION;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = SALES_TRANSACTION)
-@TypeDef(name = "json", typeClass = JsonType.class)
 @Getter
 @Data
 @Builder
@@ -57,7 +55,8 @@ public class SaleTransaction extends BaseModel {
     @OneToMany(mappedBy = "transaction")
     private List<SaleTransactionItem> items;
 
-    @Type(type = "json")
+    // Hibernate 6 / Hypersistence JSON mapping
+    @Type(JsonType.class)
     @Column(columnDefinition = "json")
     private String other;
 

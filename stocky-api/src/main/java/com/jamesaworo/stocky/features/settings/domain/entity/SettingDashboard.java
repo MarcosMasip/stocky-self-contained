@@ -1,7 +1,7 @@
 package com.jamesaworo.stocky.features.settings.domain.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import static com.jamesaworo.stocky.core.constants.Table.SETTING_DASHBOARD;
 

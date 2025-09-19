@@ -14,7 +14,7 @@ import com.jamesaworo.stocky.features.company.domain.usecase.ICompanyBasicDetail
 import com.jamesaworo.stocky.features.settings.domain.entity.Setting;
 import lombok.RequiredArgsConstructor;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

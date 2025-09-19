@@ -13,27 +13,26 @@ COMMAND=${1:-start}
 
 function ensure_java() {
   if ! command -v java >/dev/null 2>&1; then
-    echo "[ERROR] Java 17 is required but 'java' not found in PATH" >&2
+    echo "[ERROR] Java 21 (or 21+ LTS) is required but 'java' not found in PATH" >&2
     exit 1
   fi
   VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
   MAJOR=${VERSION%%.*}
-  if [[ ${MAJOR} != 17 ]]; then
+  if (( MAJOR < 21 )); then
     cat >&2 <<EOF
 [ERROR] Detected Java version ${VERSION}.
-This project currently requires JDK 17 (tooling/plugins are not yet aligned with ${VERSION}).
+Minimum supported version after migration is JDK 21.
 
-Fix options (macOS examples):
-  1. Install Temurin 17 (Adoptium) and set it active:
-     brew install --cask temurin17
-     export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-     export PATH="$JAVA_HOME/bin:$PATH"
-  2. Use SDKMAN:
-     curl -s "https://get.sdkman.io" | bash
-     sdk install java 17.0.10-tem
-     sdk use java 17.0.10-tem
+Install examples (macOS):
+  brew install --cask temurin21
+  export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+  export PATH="$JAVA_HOME/bin:$PATH"
 
-Then re-run: ./run.sh start
+Other options:
+  SDKMAN: sdk install java 21.0.2-tem
+  Linux (Debian/Ubuntu): sudo apt install -y openjdk-21-jdk
+
+Re-run: ./run.sh start
 EOF
     exit 1
   fi

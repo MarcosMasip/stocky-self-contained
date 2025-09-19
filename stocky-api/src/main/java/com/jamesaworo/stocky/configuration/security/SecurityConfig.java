@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,16 +27,26 @@ prePostEnabled = true enables @PreAuthorize, @PostAuthorize, @PreFilter, @PostFi
 
 //@EnableScheduling
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
 public class SecurityConfig {
 
     private static final String[] UI_WHITELIST = {
-            "/",
-            "/**.css",
-            "/**.js", "/**.png", "/**.jpg", "/**.jpeg", "/**.svg", "**.svg",
-            "**.jpg",
-            "/static/**", "/assets/**"
+            "/",                    // SPA root
+            "/index.html",          // explicit index (welcome page)
+            "/favicon.ico",
+            "/assets/**",            // Angular assets folder
+            "/static/**",            // any remaining static (defensive)
+            "/*.css",
+            "/*.js",
+            "/**/*.css",
+            "/**/*.js",
+            "/**/*.png",
+            "/**/*.jpg",
+            "/**/*.jpeg",
+            "/**/*.svg",
+            "/**/*.ico",
+            "/**/*.map"              // source maps (dev diagnostics)
     };
 
     private static final String[] AUTH_WHITELIST = {
@@ -55,20 +65,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
-        http.headers().frameOptions().sameOrigin().and();
-        http.authorizeRequests().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-        http.authorizeRequests().antMatchers(UI_WHITELIST).permitAll();
-        http.authorizeRequests().antMatchers(H2_WHITELIST).permitAll();
-        http.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll();
-        http.authorizeRequests().anyRequest().authenticated();
-
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
-
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(UI_WHITELIST).permitAll()
+                        .requestMatchers(H2_WHITELIST).permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)

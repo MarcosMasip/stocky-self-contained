@@ -11,8 +11,8 @@ import com.jamesaworo.stocky.core.base.BaseModel;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull; // already migrated (idempotent safeguard)
 import java.util.Set;
 
 import static com.jamesaworo.stocky.core.constants.Table.AUTH_ROLE;

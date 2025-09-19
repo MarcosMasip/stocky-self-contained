@@ -9,7 +9,7 @@ package com.jamesaworo.stocky.features.product.domain.entity;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 import static com.jamesaworo.stocky.core.constants.Table.PRODUCT_DISCOUNT;

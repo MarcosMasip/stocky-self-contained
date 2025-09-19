@@ -8,6 +8,7 @@ import org.modelmapper.MappingException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.ObjectUtils;
@@ -24,10 +25,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.UnexpectedTypeException;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.UnexpectedTypeException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
@@ -222,12 +223,16 @@ public class CustomExceptionHandler extends RuntimeException {
 	 */
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<CustomExceptionResponse> handleResponseStatusException(ResponseStatusException ex) {
-        HttpStatus status = ex.getStatus();
-        int code = status.value();
-        String reason = ex.getReason() != null ? ex.getReason() : "Unsatisfied Input";
-        return ResponseEntity.badRequest().body(new CustomExceptionResponse(status, List.of(reason), code));
-    }
+        public ResponseEntity<CustomExceptionResponse> handleResponseStatusException(ResponseStatusException ex) {
+                HttpStatusCode statusCode = ex.getStatusCode();
+                HttpStatus status = HttpStatus.resolve(statusCode.value());
+                if (status == null) {
+                        status = BAD_REQUEST;
+                }
+                int code = statusCode.value();
+                String reason = ex.getReason() != null ? ex.getReason() : "Unsatisfied Input";
+                return ResponseEntity.status(status).body(new CustomExceptionResponse(status, List.of(reason), code));
+        }
 
 	/*
     @ExceptionHandler(BadCredentialsException.class)
@@ -357,15 +362,16 @@ public class CustomExceptionHandler extends RuntimeException {
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    public ResponseEntity<CustomExceptionResponse> handleHttpClientErrorException(HttpClientErrorException ex) {
-        HttpStatus statusCode = ex.getStatusCode();
-        HttpStatus status = !ObjectUtils.isEmpty(statusCode) ? statusCode : HttpStatus.UNAUTHORIZED;
-        int code = status.value();
-        String message = ex.getMessage();
-        assert message != null;
-
-        return ResponseEntity.status(status).body(new CustomExceptionResponse(status, List.of(message), code));
-    }
+        public ResponseEntity<CustomExceptionResponse> handleHttpClientErrorException(HttpClientErrorException ex) {
+                HttpStatusCode statusCode = ex.getStatusCode();
+                HttpStatus status = HttpStatus.resolve(statusCode.value());
+                if (status == null) {
+                        status = HttpStatus.UNAUTHORIZED;
+                }
+                int code = statusCode.value();
+                String message = ex.getMessage() != null ? ex.getMessage() : ERROR_OCCURRED;
+                return ResponseEntity.status(status).body(new CustomExceptionResponse(status, List.of(message), code));
+        }
 
     @ExceptionHandler(RestClientException.class)
     public ResponseEntity<CustomExceptionResponse> handleRestClientException(RestClientException ex) {
@@ -376,12 +382,15 @@ public class CustomExceptionHandler extends RuntimeException {
     }
 
     @ExceptionHandler(HttpStatusCodeException.class)
-    public ResponseEntity<CustomExceptionResponse> handleHttpStatusCodeException(HttpStatusCodeException ex) {
-        HttpStatus status = ex.getStatusCode();
-        int code = status.value();
-        return ResponseEntity.status(status).body(
-                new CustomExceptionResponse(status, List.of(CONNECTION_EXCEPTION), code));
-    }
+        public ResponseEntity<CustomExceptionResponse> handleHttpStatusCodeException(HttpStatusCodeException ex) {
+                HttpStatusCode statusCode = ex.getStatusCode();
+                HttpStatus status = HttpStatus.resolve(statusCode.value());
+                if (status == null) {
+                        status = HttpStatus.BAD_GATEWAY;
+                }
+                int code = statusCode.value();
+                return ResponseEntity.status(status).body(new CustomExceptionResponse(status, List.of(CONNECTION_EXCEPTION), code));
+        }
 
     @ExceptionHandler(ConnectException.class)
     public ResponseEntity<CustomExceptionResponse> handleConnectException(ConnectException ex) {

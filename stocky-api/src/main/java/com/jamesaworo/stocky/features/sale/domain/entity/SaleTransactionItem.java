@@ -10,7 +10,7 @@ package com.jamesaworo.stocky.features.sale.domain.entity;
 import com.jamesaworo.stocky.features.product.domain.entity.Product;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static com.jamesaworo.stocky.core.constants.Table.SALES_TRANSACTION_ITEM;
 

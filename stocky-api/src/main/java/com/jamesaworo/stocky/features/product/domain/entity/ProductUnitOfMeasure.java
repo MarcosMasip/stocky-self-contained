@@ -11,7 +11,7 @@ import com.jamesaworo.stocky.core.base.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 import static com.jamesaworo.stocky.core.constants.Table.PRODUCT_UNIT_OF_MEASURE;

@@ -415,8 +415,8 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 
 | Layer | Tech | Notes |
 |-------|------|-------|
-| Backend | Spring Boot 2.7.x | Serves REST + Angular dist from one JAR |
-| Java | 17 | Single target (no mixed source levels) |
+| Backend | Spring Boot 3.3.x | Serves REST + Angular dist from one JAR |
+| Java | 21 | Single target (no mixed source levels) |
 | Frontend | Angular 15 | Built via Maven; no separate Node install required |
 | TypeScript | 4.x (Angular ecosystem) | Managed by Angular build | 
 | Build Orchestration | Maven + frontend-maven-plugin | Pinned Node 18 for reproducibility |
@@ -437,7 +437,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 | Telemetry | Amplitude & Rollbar active in production | Disabled by default; opt-in flag |
 | Profiles | `dev`, `prod`, others | Added `offline` as default self-contained profile |
 | Mobile URL | External IP in WebView | Localhost WebView |
-| Java Version Handling | Mixed target/source 11 vs parent 17 | Standardized to Java 17 release |
+| Java Version Handling | Mixed target/source 11 vs parent 17 | Upgraded to Java 21 release (toolchain enforced) |
 | Scripts | None | `run.sh`, `run.ps1`, `run.bat` |
 | Seeding | Seeders present but manual startup | Automatic via `OfflineSeedRunner` in offline profile |
 | External Calls | Possible analytics/error calls | None by default |
@@ -447,7 +447,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| Build fails `NoSuchFieldError JCTree` | Running with JDK >17 (e.g. 21) against plugins expecting 17 internals | Switch to JDK 17 (now enforced by script + toolchain) |
+| Build fails `NoSuchFieldError JCTree` | Legacy Boot 2 + JDK 21 mismatch | Resolved by upgrading to Boot 3 + Java 21 |
 | Port 8080 in use | Another service running | Stop other service or run `JAVA_OPTS="-Dserver.port=9090" ./run.sh start` |
 | Empty UI / 404 | Angular dist missing | Remove `stocky-api/target` and re-run `./run.sh start` |
 | H2 data reset accidentally | Deleted `data/h2` folder | Just restart; seeders recreate core data |
@@ -455,12 +455,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 | `permission denied: ./run.sh` | File not executable bit after clone (some OS / archive methods) | `chmod +x run.sh` or run with `bash run.sh start` |
 
 ### JDK Version Clarification
-The project compiles and runs on Java 17 (target) and usually on newer LTS (21). If you encounter classpath / plugin quirks on 21, install JDK 17 and export `JAVA_HOME` before running the script. Example:
-```bash
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
-export PATH="$JAVA_HOME/bin:$PATH"
-./run.sh start
-```
+Project now targets Java 21 only. Scripts will prompt if `java -version` is < 21 and can auto-fetch a portable Temurin 21 if permitted.
 
 Optional direct JAR run (after build):
 ```bash
@@ -503,8 +498,8 @@ Original project by Aworo James. This fork focuses on offline ergonomics & simpl
 
 
 ## Technology Badges (Current Stack)
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.x-brightgreen)
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.x-brightgreen)
 ![Angular](https://img.shields.io/badge/Angular-15-red)
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue)
 ![H2](https://img.shields.io/badge/Database-H2-lightgrey)

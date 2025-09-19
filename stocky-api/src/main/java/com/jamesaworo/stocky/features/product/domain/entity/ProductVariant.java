@@ -5,8 +5,8 @@ import com.jamesaworo.stocky.features.product.domain.enums.ProductVariantType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull; // already migrated (idempotent safeguard)
 
 import static com.jamesaworo.stocky.core.constants.Table.PRODUCT_VARIATIONS;
 

@@ -11,7 +11,7 @@ import com.jamesaworo.stocky.features.authentication.domain.enums.AppModuleEnum;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static com.jamesaworo.stocky.core.constants.Table.AUTH_PERMISSION;
 

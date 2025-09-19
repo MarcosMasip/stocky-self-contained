@@ -7,9 +7,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 
 @MappedSuperclass
-@TypeDef(name = "json", typeClass = JsonType.class)
 @Setter
 @Getter
 public class Setting extends BaseModel {
@@ -37,7 +35,8 @@ public class Setting extends BaseModel {
     @Column(nullable = false)
     private String settingTitle;
 
-    @Type(type = "json")
+    // Hibernate 6 / Hypersistence JSON mapping
+    @Type(JsonType.class)
     @Column(columnDefinition = "json")
     private Collection<SettingOption> settingOptions;
 

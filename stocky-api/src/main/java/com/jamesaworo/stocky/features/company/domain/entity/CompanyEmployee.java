@@ -11,7 +11,7 @@ import com.jamesaworo.stocky.core.base.BaseModel;
 import com.jamesaworo.stocky.features.authentication.domain.entity.User;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static com.jamesaworo.stocky.core.constants.Table.COMPANY_EMPLOYEE;
 

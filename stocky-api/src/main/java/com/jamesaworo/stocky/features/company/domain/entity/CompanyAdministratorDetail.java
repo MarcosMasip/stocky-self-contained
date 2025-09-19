@@ -10,7 +10,7 @@ package com.jamesaworo.stocky.features.company.domain.entity;
 import com.jamesaworo.stocky.core.base.BaseModel;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static com.jamesaworo.stocky.core.constants.Table.COMPANY_ADMIN_DETAILS;
 

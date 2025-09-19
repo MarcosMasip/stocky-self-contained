@@ -10,8 +10,8 @@ package com.jamesaworo.stocky.features.company.domain.entity;
 import com.jamesaworo.stocky.core.base.BaseModel;
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull; // already migrated (idempotent safeguard)
 import java.time.LocalDate;
 
 import static com.jamesaworo.stocky.core.constants.Table.COMPANY_EMPLOYEE_PERSONAL_DETAIL;

@@ -17,10 +17,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -43,18 +43,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        // Bypass JWT auth for any request that is NOT under the API namespace.
+        // This allows the Angular SPA static resources (/, /index.html, *.js, *.css, /assets/**, etc.)
+        // to be served anonymously while still protecting REST endpoints.
+        String uri = request.getRequestURI();
+        if (!uri.startsWith("/api/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             String token = extractTokenFromRequest(request);
             if (token != null && jwtTokenUtil.validateToken(token)) {
                 String username = jwtTokenUtil.getUsernameFromToken(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            // Only send 401 for API calls; non-API already returned above.
             request.setAttribute("exception", e.getMessage());
             response.sendError(HttpStatus.UNAUTHORIZED.value());
         }

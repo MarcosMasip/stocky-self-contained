@@ -11,7 +11,7 @@ import com.jamesaworo.stocky.core.base.BaseModel;
 import com.jamesaworo.stocky.features.stock.domain.enums.StockStatus;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
