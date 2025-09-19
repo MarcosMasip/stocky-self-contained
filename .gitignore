@@ -19,3 +19,10 @@ HELP.md
 **/node-modules
 
 ### Flutter
+
+# --- Local Dev Databases / Runtime Artifacts ---
+# H2 embedded database files (generated at runtime, should not be versioned)
+stocky-api/data/h2/*.mv.db
+stocky-api/data/h2/*.trace.db
+stocky-api/data/h2/*.lock.db
+

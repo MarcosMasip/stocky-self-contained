@@ -31,31 +31,10 @@ prePostEnabled = true enables @PreAuthorize, @PostAuthorize, @PreFilter, @PostFi
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String[] UI_WHITELIST = {
-            "/",                    // SPA root
-            "/index.html",          // explicit index (welcome page)
-            "/favicon.ico",
-            "/assets/**",            // Angular assets folder
-            "/static/**",            // any remaining static (defensive)
-            "/**.css",
-            "/**.js",
-            "/**.png",
-            "/**.jpg",
-            "/**.jpeg",
-            "/**.svg",
-            "/**.ico",
-            "/**.map"              // source maps (dev diagnostics)
-    };
+    private static final String LOGIN_ENDPOINT = API_PREFIX + "/auth/login";
+    private static final String API_ALL = API_PREFIX + "/**";
 
-    private static final String[] AUTH_WHITELIST = {
-            API_PREFIX + "/auth/login",
-            API_PREFIX + "/auth/debug/**",
-            API_PREFIX + "/auth/users"
-    };
-
-    private static final String[] H2_WHITELIST = {
-            "/h2-console/**"
-    };
+    private static final String H2_CONSOLE = "/h2-console/**";
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -70,11 +49,12 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Allow static resources + SPA root implicitly (only guard /api/**)
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers(UI_WHITELIST).permitAll()
-                        .requestMatchers(H2_WHITELIST).permitAll()
-                        .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(H2_CONSOLE).permitAll()
+                        .requestMatchers(LOGIN_ENDPOINT).permitAll()
+                        .requestMatchers(API_ALL).authenticated() // every API call requires auth except those above
+                        .anyRequest().permitAll() // non-API fall back (serving index.html, etc.)
                 )
                 .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

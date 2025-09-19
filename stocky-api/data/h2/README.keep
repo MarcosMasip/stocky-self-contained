@@ -1,0 +1,10 @@
+This directory holds the local embedded H2 database files used when running the application locally/offline.
+
+Ignored patterns (see project .gitignore):
+  *.mv.db
+  *.trace.db
+  *.lock.db
+
+They are runtime artifacts and will be recreated / seeded automatically on next startup.
+
+Do not commit actual database files. This placeholder keeps the directory structure in Git.

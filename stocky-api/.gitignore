@@ -33,3 +33,9 @@ build/
 .vscode/
 
 **/**.jasper
+
+# --- Local Dev Databases / Runtime Artifacts ---
+# H2 embedded database files (generated; seeding recreates baseline)
+data/h2/*.mv.db
+data/h2/*.trace.db
+data/h2/*.lock.db
