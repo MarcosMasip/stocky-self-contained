@@ -1,95 +1,63 @@
 # Stocky (Self‑Contained Offline Fork)
 
-This fork of Stocky transforms the original multi-command setup into a **single self‑contained, offline‑capable distribution**. After a one‑time dependency download, you can run the entire stack (Spring Boot API + Angular UI + embedded H2 database + optional Flutter WebView wrapper) **with a single command in one terminal** on macOS / Linux / Windows.
+A streamlined fork delivering the full application (Spring Boot API + Angular UI + embedded H2) from a **single command**. After the first build (downloads dependencies once), you can work **fully offline** on macOS / Linux / Windows.
 
-Core goals of this fork:
-1. Zero external runtime calls by default (analytics & error reporting disabled unless explicitly re‑enabled).
-2. One build pipeline (Maven orchestrates Angular build, bundles UI into the Spring Boot JAR).
-3. Local file‑based H2 database stored within the project (`stocky-api/data/h2`) for easy portability.
-4. Auto seeding of permissions, role, settings, company placeholder, and a default admin user.
-5. Cross‑platform run scripts: `run.sh`, `run.ps1`, `run.bat`.
+Core goals:
+1. Single build pipeline — Maven drives Angular build and packages UI into the backend JAR.
+2. Project‑relative H2 (no global paths): `stocky-api/data/h2`.
+3. Automatic seeding (roles, permissions, settings, company placeholder, admin user).
+4. Zero external telemetry by default (Amplitude & Rollbar opt‑in only).
+5. Cross‑platform scripts: `run.sh`, `run.ps1`, `run.bat`, plus one‑shot launchers `stocky`, `stocky.cmd`.
 
 ---
 ## Quick Start
 
-Choose the scenario that matches where you are right now:
-
-### A. You ALREADY have this repository open (you see files like `run.sh`, `stocky-api`, `stocky-web`)
-Just run:
-```bash
-chmod +x run.sh stocky quickstart.sh 2>/dev/null || true  # first time only on macOS/Linux
-./run.sh start          # macOS / Linux
-```
-Windows (PowerShell):
-```powershell
-./run.ps1 start
-```
-If PowerShell script execution is blocked:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\run.ps1 start
-```
-Windows (classic CMD):
-```bat
-run.bat start
-```
-
-### B. FRESH clone (you are not in the folder yet)
-```bash
-git clone <your-fork-url> stocky-self-contained
-cd stocky-self-contained
-./run.sh start
-```
-
-Then open: http://localhost:8080
-
-Seed credentials:
-```
-admin / admin123
-```
-
-> The first run is a full bootstrap (network required ONCE). Afterwards you can disconnect and keep using it entirely offline.
-
----
-## Ultra-Short Setup (<= 3 Commands)
-
-### Universal Launcher (All Platforms)
-
-After cloning and entering the directory you can use a single launcher:
+Fresh clone or already inside the repo — the process is the same:
 
 macOS / Linux:
 ```bash
+git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained
+chmod +x run.sh 2>/dev/null || true
+./run.sh start
+```
+Windows (PowerShell):
+```powershell
 git clone <your-fork-url> stocky-self-contained
 cd stocky-self-contained
-./stocky     # builds (first run) then runs; ensures JDK 21+
+./run.ps1 start
 ```
-
-Windows (PowerShell or CMD):
+PowerShell policy blocked?
+```powershell
+powershell -ExecutionPolicy Bypass -File .\run.ps1 start
+```
+Windows (CMD):
 ```bat
 git clone <your-fork-url> stocky-self-contained
 cd stocky-self-contained
-stocky.cmd   # builds (first run) then runs
+run.bat start
 ```
 
-Already inside the repo? Just:
+Open http://localhost:8080 and log in:
+```
+admin / admin123
+```
+First run = full dependency + Angular build. Subsequent runs reuse caches; you can disconnect.
+
+---
+### One‑Line Launcher (Alternative)
+macOS / Linux:
 ```bash
-./stocky        # macOS/Linux
-stocky.cmd      # Windows
+git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained && ./stocky
 ```
-
-Other actions:
-```bash
-./stocky setup   # build only
-./stocky clean   # clean artifacts + data
+Windows:
+```bat
+git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained && stocky.cmd
 ```
-
-Expected (first run): dependency download, Angular build, seeding, app at http://localhost:8080.
 
 ---
 
 ---
-## Complete Command Sequence (Copy/Paste Friendly)
-
-This section lists EXACT commands in the order you execute them, plus the expected outcome after each command so users can verify progress. Separate blocks are provided per platform. Steps marked (FIRST RUN ONLY) are not needed again once completed.
+## Detailed First Run (What to Expect)
 
 ### macOS / Linux (Fresh Clone)
 ```bash
@@ -119,44 +87,19 @@ chmod +x run.sh
 #   - Ready when: 'Tomcat started on port 8080' + 'Started StockyApplication'
 ```
 
-### macOS / Linux (Subsequent Run)
+### Subsequent Run (Any Platform)
 ```bash
 ./run.sh start
 # Expected: Skips dependency downloads unless sources changed; starts much faster.
 ```
 
-### Windows PowerShell (Fresh Clone)
-```powershell
-# 1. Clone (FIRST RUN ONLY)
-git clone <your-fork-url> stocky-self-contained
-# Expected: Creates folder with code.
-
-# 2. Enter folder (FIRST RUN ONLY)
-cd stocky-self-contained
-# Expected: Path ends with stocky-self-contained>
-
-# 3. Start full stack
-./run.ps1 start
-# Expected: Same sequence as macOS/Linux; final log shows Spring Boot started.
-
-# (If execution policy error appears)
-powershell -ExecutionPolicy Bypass -File .\run.ps1 start
-# Expected: Script runs despite policy restrictions.
-```
-
-### Windows CMD (Fresh Clone)
-```bat
-git clone <your-fork-url> stocky-self-contained
-cd stocky-self-contained
-run.bat start
-:: Expected: Similar output, culminating in Spring Boot started on 8080.
-```
+Windows specifics covered above in Quick Start.
 
 ### After Successful Start
 Open http://localhost:8080 in a browser.
 Expected: Login page loads. Use admin / admin123. After login you see dashboard modules.
 
-### Smoke Test (Optional Automation)
+### Smoke Test (Optional)
 Run in a second terminal while the app is running:
 ```bash
 curl -I http://localhost:8080/ | grep '200'
@@ -217,11 +160,6 @@ If multiple JDKs are installed, export JAVA_HOME or adjust PATH before running `
 ---
 
 ---
-## One-Liner (Fresh Clone – Unix-like)
-```bash
-git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained && ./run.sh start
-```
-
 ---
 ## What’s Included
 
@@ -235,7 +173,7 @@ git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained && .
 | Telemetry | Amplitude + Rollbar (gated) | Disabled unless `window.ENABLE_TELEMETRY=true` |
 
 ---
-## What The Run Script Actually Does (Bootstrap Flow)
+## What The Run Script Does (Bootstrap Flow)
 
 When you invoke `./run.sh start` (or platform equivalent) on the FIRST run it will:
 1. Verify JDK 21+ is available (`java -version`).
@@ -252,7 +190,7 @@ When you invoke `./run.sh start` (or platform equivalent) on the FIRST run it wi
 
 Subsequent `start` runs skip steps already satisfied (rebuild only if sources changed) and reuse the downloaded dependencies — so they are fully offline.
 
-## Run Script Commands (Summary)
+## Run Script Commands
 
 `./run.sh` (macOS/Linux) / `run.ps1` (PowerShell) / `run.bat` (CMD):
 
@@ -294,22 +232,16 @@ Or add a custom environment that sets this flag before building (advanced). By d
 
 ---
 ## Flutter Mobile Wrapper (Optional)
-The `stocky-mobile` module embeds a WebView pointing to `http://127.0.0.1:8080/`.
-
-Run (example):
+`stocky-mobile` is provided as a convenience WebView shell (NOT part of the Maven reactor: root POM modules list only `stocky-web`, `stocky-api`). To try it:
 ```bash
 cd stocky-mobile
 flutter pub get
 flutter run -d macos   # or another device/emulator
 ```
-Ensure the backend is already running via `./run.sh start`.
+Backend must be running first (localhost:8080).
 
 ---
-## Original Screenshots
-
-Below are unchanged screenshots from the original project for reference.
-
-## Screenshot
+## Screenshots
 
 See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 
@@ -361,7 +293,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
  <img src="screens/08-add-expenses-dark.png" width="50%">
 </div>
 
-## Core Features (Unchanged Functional Scope)
+## Core Features
 - Authentication & authorization (JWT + roles/permissions)
 - Inventory & stock management
 - Company / customers / employees
@@ -371,7 +303,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 - Search & filtering
 
 ---
-## Technology Stack (Current)
+## Technology Stack
 
 | Layer | Tech | Notes |
 |-------|------|-------|
@@ -387,7 +319,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 | Telemetry | Amplitude / Rollbar (gated) | Disabled unless `window.ENABLE_TELEMETRY=true` |
 
 ---
-## Differences vs Original Upstream
+## Differences vs Upstream
 
 | Category | Original | This Fork |
 |----------|----------|-----------|
@@ -411,6 +343,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 | Port 8080 in use | Another service running | Stop other service or run `JAVA_OPTS="-Dserver.port=9090" ./run.sh start` |
 | Empty UI / 404 | Angular dist missing | Remove `stocky-api/target` and re-run `./run.sh start` |
 | H2 data reset accidentally | Deleted `data/h2` folder | Just restart; seeders recreate core data |
+| H2 file lock stack traces | Previous instance still running or orphaned lock | Stop other process; ensure no Java process holds the file; optionally remove `*.lock.db` and restart |
 | Windows script blocked | Execution policy | Run PowerShell as: `powershell -ExecutionPolicy Bypass -File .\run.ps1 start` |
 | `permission denied: ./run.sh` | File not executable bit after clone (some OS / archive methods) | `chmod +x run.sh` or run with `bash run.sh start` |
 
@@ -437,15 +370,15 @@ cd stocky-api
 For normal users this is not required.
 
 ---
-## Security Note
+## Security Model & Note
+All `/api/**` endpoints require a valid JWT (login issues one). Login endpoint and H2 console are open. Static Angular assets and root SPA route are publicly served. For local/offline use, change seed credentials in `application-offline.properties` or via env vars (e.g. `STOCKY_SYSTEM_USERNAME`, `STOCKY_SYSTEM_PASSWORD` if mapped) before first start.
 Seed credentials are for local/offline use only. Change `stocky.system.username` and `stocky.system.password` in `application-offline.properties` (or set environment variables) if you share a machine.
 
 ---
 ## License
-This fork remains under the original MIT License. See `LICENSE`.
+MIT — see `LICENSE`.
 
----
-## Future Enhancements (Planned Suggestions)
+## Future Enhancements (Suggestions)
 - Prebuilt binary archive with dependencies warmed.
 - Docker offline bundle / Compose file.
 - Native image build (GraalVM) for faster startup.
@@ -454,10 +387,10 @@ This fork remains under the original MIT License. See `LICENSE`.
 
 ---
 ## Acknowledgements
-Original project by Aworo James. This fork focuses on offline ergonomics & simplified developer onboarding.
+Original project by Aworo James. Fork focuses on offline ergonomics & simplified onboarding.
 
 
-## Technology Badges (Current Stack)
+## Technology Badges
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.x-brightgreen)
 ![Angular](https://img.shields.io/badge/Angular-15-red)
@@ -483,12 +416,12 @@ curl -s -X POST http://localhost:8080/api/v1/auth/login \
 ```
 Expected JSON contains a `token` field.
 
-Use the token for an authenticated call (example endpoint – adjust to a real one if different):
+Use the token for an authenticated call (replace with a confirmed endpoint present in the codebase, e.g. a settings or profile endpoint):
 ```bash
 TOKEN=<paste-token-here>
-curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/settings
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/auth/login --head
 ```
-If unauthorized, re-check the username/password or that seeding completed.
+If unauthorized, re-check credentials or confirm seed logs.
 
 ---
 ## Minimal Command Cheat Sheet
@@ -499,15 +432,11 @@ If unauthorized, re-check the username/password or that seeding completed.
 | Build only | `./run.sh setup` |
 | Clean & reseed | `./run.sh clean && ./run.sh start` |
 | Direct jar run | `java -jar stocky-api/target/stocky-api.jar --spring.profiles.active=offline` |
-| API login test | `curl -X POST http://localhost:8080/api/v1/auth/login -d '{"username":"admin","password":"admin123"}' -H 'Content-Type: application/json'` |
+| API login test | `curl -X POST http://localhost:8080/api/v1/auth/login -H 'Content-Type: application/json' -d '{"username":"admin","password":"admin123"}'` |
 | Change port | `JAVA_OPTS="-Dserver.port=9090" ./run.sh start` |
 
 ---
 
 ## Author
+[Aworo James](mailto:james.aworo@outlook.com)
 
-[Aworo James: james.aworo@outlook.com](james.aworo@outlook.com)
-
-## License
-
-Stocky is released under the MIT License.
