@@ -34,7 +34,8 @@ public class UserSeeder {
     @Value(value = "${stocky.system.username}")
     private String systemUsername;
 
-    @Value(value = "${spring.profiles.active")
+    // Corrected malformed @Value (was missing closing brace) so active profile can be read
+    @Value(value = "${spring.profiles.active:offline}")
     private String profiles;
 
     public void run() {
@@ -55,7 +56,7 @@ public class UserSeeder {
                 user.setExpirationDate(date);
                 this.roleRepository.findByNameEqualsIgnoreCase(DEFAULT_SYS_ROLE).ifPresent(role -> user.setRoles(Set.of(role)));
                 this.userRepository.save(user);
-                System.out.println("----- seed user -----");
+                System.out.println("----- seed user (" + username + ") with expiry " + date + " -----");
             }
         } else {
             System.out.println("no username provided in environment properties");

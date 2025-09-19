@@ -37,20 +37,20 @@ public class SecurityConfig {
             "/favicon.ico",
             "/assets/**",            // Angular assets folder
             "/static/**",            // any remaining static (defensive)
-            "/*.css",
-            "/*.js",
-            "/**/*.css",
-            "/**/*.js",
-            "/**/*.png",
-            "/**/*.jpg",
-            "/**/*.jpeg",
-            "/**/*.svg",
-            "/**/*.ico",
-            "/**/*.map"              // source maps (dev diagnostics)
+            "/**.css",
+            "/**.js",
+            "/**.png",
+            "/**.jpg",
+            "/**.jpeg",
+            "/**.svg",
+            "/**.ico",
+            "/**.map"              // source maps (dev diagnostics)
     };
 
     private static final String[] AUTH_WHITELIST = {
             API_PREFIX + "/auth/login",
+            API_PREFIX + "/auth/debug/**",
+            API_PREFIX + "/auth/users"
     };
 
     private static final String[] H2_WHITELIST = {
