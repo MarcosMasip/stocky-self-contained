@@ -161,7 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('http://45.56.112.162:8081/'));
+  // Point to locally served self-contained application (Spring Boot serves Angular UI)
+  ..loadRequest(Uri.parse('http://127.0.0.1:8080/'));
 
     // #docregion platform_features
     if (controller.platform is AndroidWebViewController) {

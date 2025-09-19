@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Unified cross-platform (POSIX) launcher for Stocky.
+# Usage: ./stocky [command]
+# Commands:
+#   start (default)  Build & run (uses quickstart logic for JDK install if available)
+#   clean            Clean artifacts & data
+#   setup            Build only
+#   help             Show help
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+CMD=${1:-start}
+
+if [[ ! -x ./run.sh ]]; then chmod +x ./run.sh || true; fi
+
+case "$CMD" in
+  start)
+    if [[ -x ./quickstart.sh ]]; then
+      exec ./quickstart.sh
+    else
+      exec ./run.sh start
+    fi
+    ;;
+  clean)
+    exec ./run.sh clean
+    ;;
+  setup)
+    exec ./run.sh setup
+    ;;
+  help|--help|-h)
+    cat <<EOF
+Stocky unified launcher
+Usage: ./stocky [start|setup|clean|help]
+EOF
+    ;;
+  *)
+    echo "Unknown command: $CMD" >&2
+    exit 1
+    ;;
+ esac

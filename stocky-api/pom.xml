@@ -135,6 +135,50 @@
         <finalName>${project.artifactId}</finalName>
 
         <plugins>
+            <!-- Frontend build: install Node, install deps, build Angular dist before copying into Spring Boot static -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.13.4</version>
+                <executions>
+                    <execution>
+                        <id>install-node-and-npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v18.18.0</nodeVersion>
+                            <npmVersion>9.8.1</npmVersion>
+                            <!-- Install node inside the frontend project so later npm executions
+                                 (which set workingDirectory to ../stocky-web) find the binary at
+                                 ../stocky-web/node/node instead of looking in a non-existent path. -->
+                            <workingDirectory>../stocky-web</workingDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-ci</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>ci --no-audit --no-fund --legacy-peer-deps</arguments>
+                            <workingDirectory>../stocky-web</workingDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>run build</arguments>
+                            <workingDirectory>../stocky-web</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -151,10 +195,11 @@
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
-                        <phase>validate</phase>
+                        <id>copy-frontend</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -173,9 +218,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <release>17</release>
                 </configuration>
             </plugin>
         </plugins>
