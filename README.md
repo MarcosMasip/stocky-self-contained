@@ -60,7 +60,7 @@ macOS / Linux:
 ```bash
 git clone <your-fork-url> stocky-self-contained
 cd stocky-self-contained
-./stocky     # builds (first run) then runs; auto JDK 17 install if needed via quickstart.sh
+./stocky     # builds (first run) then runs; ensures JDK 21+
 ```
 
 Windows (PowerShell or CMD):
@@ -108,14 +108,15 @@ chmod +x run.sh
 # 4. Start the full stack (build + seed + run)
 ./run.sh start
 # Expected (FIRST RUN):
-#   - Java 17 check passes (or helpful error if not 17)
-#   - Maven downloads dependencies
-#   - frontend-maven-plugin installs Node & npm into stocky-web
-#   - npm ci runs (clean deterministic install)
-#   - Angular production build emits dist/stocky-web
-#   - Resources copied into backend static directory
-#   - Spring Boot starts with profile=offline
-#   - Console ends with 'Started' message and Tomcat on port 8080
+#   - Java 21 check passes (or helpful error if <21)
+#   - Maven downloads backend + plugin dependencies
+#   - frontend-maven-plugin provisions a pinned Node 18
+#   - npm ci executes (deterministic install)
+#   - Angular production build emits hashed bundles
+#   - Bundles copied into backend classpath static/
+#   - Spring Boot starts with profile=offline (port 8080)
+#   - Seeder logs multiple "seed ..." lines then '[offline] Seed checks completed.'
+#   - Ready when: 'Tomcat started on port 8080' + 'Started StockyApplication'
 ```
 
 ### macOS / Linux (Subsequent Run)
@@ -192,67 +193,26 @@ curl -s http://localhost:8080/ | grep -i '<title'
 | Application startup | Yes | Yes |
 
 ---
-## Installing Java 17 (Examples)
-You must use JDK 17 (toolchain + script enforce). Choose ONE method below.
-
-### macOS (Homebrew)
+## Java 21 Prerequisite
+You need a JDK 21 (LTS) installation available on PATH. Check:
 ```bash
-brew install --cask temurin17
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-export PATH="$JAVA_HOME/bin:$PATH"
-java -version  # Expected: version 17.x
-```
-
-### macOS (SDKMAN alternative)
-```bash
-curl -s "https://get.sdkman.io" | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-sdk install java 17.0.10-tem
-sdk use java 17.0.10-tem
-java -version  # Expected: 17.x
-```
-
-### Ubuntu / Debian
-```bash
-sudo apt update
-sudo apt install -y openjdk-17-jdk
-java -version  # Expected: openjdk version "17..."
-```
-
-### Fedora / RHEL / CentOS (dnf)
-```bash
-sudo dnf install -y java-17-openjdk-devel
 java -version
 ```
+Expect: `openjdk 21.*` (Temurin, Oracle, or any distribution). If not:
 
-### Arch Linux
+macOS (Homebrew):
 ```bash
-sudo pacman -S --noconfirm jdk17-openjdk
-java -version
+brew install --cask temurin
 ```
-
-### Windows (winget)
+Linux (Debian/Ubuntu):
+```bash
+sudo apt update && sudo apt install -y openjdk-21-jdk
+```
+Windows (winget):
 ```powershell
-winget install EclipseAdoptium.Temurin.17.JDK
-java -version
+winget install EclipseAdoptium.Temurin.21.JDK
 ```
-
-### Windows (Chocolatey)
-```powershell
-choco install temurin17 -y
-refreshenv
-java -version
-```
-
----
-## Why Java 17 (Rationale)
-
-The current Spring Boot version and some transitive plugins rely on stable internal compiler tree structures present in JDK 17. With JDK 21, certain annotation-processing or plugin assumptions break (manifesting as `NoSuchFieldError` on `JCTree`). Upgrading to fully support JDK 21 would require:
-1. Bumping Spring Boot & related plugins to versions known compatible with 21.
-2. Verifying all third‑party libraries (JasperReports, JJWT 0.10.5, Hypersistence utilities) under 21.
-3. Re-testing build (frontend-maven-plugin unaffected, but Lombok + annotation processors need validation).
-
-Pinning to 17 guarantees a predictable, zero‑friction bootstrap. Future work could introduce a branch that upgrades Spring Boot & dependencies, then relaxes the restriction.
+If multiple JDKs are installed, export JAVA_HOME or adjust PATH before running `./run.sh start`.
 
 ---
 
@@ -267,7 +227,7 @@ git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained && .
 
 | Component | Technology | How it Runs Here |
 |-----------|------------|------------------|
-| Backend API | Spring Boot (Java 17) | Single fat JAR serves REST + static UI |
+| Backend API | Spring Boot (Java 21) | Single fat JAR serves REST + static UI |
 | Frontend UI | Angular (built via Maven) | Copied into `static/` and served by backend |
 | Database | H2 file-based | Data stored in `stocky-api/data/h2` |
 | Auth & Seed | Existing seeders + offline runner | Auto-run on startup (offline profile) |
@@ -278,7 +238,7 @@ git clone <your-fork-url> stocky-self-contained && cd stocky-self-contained && .
 ## What The Run Script Actually Does (Bootstrap Flow)
 
 When you invoke `./run.sh start` (or platform equivalent) on the FIRST run it will:
-1. Verify JDK 17+ is available (`java -version`).
+1. Verify JDK 21+ is available (`java -version`).
 2. Invoke the Maven Wrapper (downloads Maven if missing).
 3. Download backend dependencies into the local Maven cache.
 4. Download a pinned Node.js + npm (via `frontend-maven-plugin`) — no global Node install needed.
@@ -455,7 +415,7 @@ See a Live Demo Here: [stocky.jamesaworo.me](https://stocky.jamesaworo.me)
 | `permission denied: ./run.sh` | File not executable bit after clone (some OS / archive methods) | `chmod +x run.sh` or run with `bash run.sh start` |
 
 ### JDK Version Clarification
-Project now targets Java 21 only. Scripts will prompt if `java -version` is < 21 and can auto-fetch a portable Temurin 21 if permitted.
+Project targets Java 21 only. Scripts will prompt if `java -version` is < 21.
 
 Optional direct JAR run (after build):
 ```bash
@@ -512,6 +472,37 @@ All prior manual multi-step installation instructions are replaced by the single
 ./run.sh start   # or platform equivalent
 ```
 After login you can configure the company, add products/categories, and start using sales & reporting modules.
+
+---
+## Quick API Smoke Test
+After the app is running, obtain a JWT token:
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/login \
+	-H 'Content-Type: application/json' \
+	-d '{"username":"admin","password":"admin123"}' | jq
+```
+Expected JSON contains a `token` field.
+
+Use the token for an authenticated call (example endpoint – adjust to a real one if different):
+```bash
+TOKEN=<paste-token-here>
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/settings
+```
+If unauthorized, re-check the username/password or that seeding completed.
+
+---
+## Minimal Command Cheat Sheet
+| Goal | Command |
+|------|---------|
+| Fresh clone & run | `git clone <url> stocky-self-contained && cd stocky-self-contained && ./run.sh start` |
+| Subsequent start | `./run.sh start` |
+| Build only | `./run.sh setup` |
+| Clean & reseed | `./run.sh clean && ./run.sh start` |
+| Direct jar run | `java -jar stocky-api/target/stocky-api.jar --spring.profiles.active=offline` |
+| API login test | `curl -X POST http://localhost:8080/api/v1/auth/login -d '{"username":"admin","password":"admin123"}' -H 'Content-Type: application/json'` |
+| Change port | `JAVA_OPTS="-Dserver.port=9090" ./run.sh start` |
+
+---
 
 ## Author
 
