@@ -31,7 +31,7 @@ import {PassportUsecase} from '../../../routes/passport/authentication/_usecase/
                 <li nz-menu-divider></li>
                 <div nz-menu-item [routerLink]="route.SALE.Shift">
                     <i nz-icon nzType="credit-card" class="mr-sm"></i>
-                    {{ 'Shit Report' | i18n }}
+                    {{ 'Shift Report' | i18n }}
                 </div>
                 <li nz-menu-divider></li>
                 <div nz-menu-item (click)="logout()">
